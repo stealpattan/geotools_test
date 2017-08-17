@@ -58,9 +58,6 @@ public class TestGeoMap2 extends Application
     private final String[]  COUNTRIES       = { "Japan" , "United States of America" , "China" , "South Korea" , "Taiwan" , "Hong Kong S.A.R." , "Thailand" , "Singapore" , "Germany" , "Australia" , "Vietnam" };
     private final long[]    EXPORT_VALUES   = { 0 , 152246 , 132234 , 53266 , 44725 , 42360 , 33863 , 24026 , 19648 , 15549 , 15164 };
 
-    // 変数宣言(マウスドラッグ用の変数)
-    private double dragBaseX, dragBaseY;
-    private double dragBase2X, dragBase2Y;
 
     public static void main(String[] args)
     {
@@ -74,17 +71,17 @@ public class TestGeoMap2 extends Application
         Scene scene;
 
         // シーンを作成
-        primaryStage.setTitle( "日本貿易統計：2015年度輸出額上位10ヵ国" );
-        scene = new Scene(root, 1100, 500, Color.LIGHTBLUE);
+        primaryStage.setTitle( "ただ線を描きたいだけなのに・・・" );
+        scene = new Scene(root, 1100, 500, Color.LIGHTBLUE);//back ground?
 
         // 地図を作成
-        Group map   = createMap( "/Users/shoma-ito/Downloads/ne_50m_admin_0_countries/ne_50m_admin_0_countries.shp" );
+        Group map   = createMap( "/Users/shoma-ito/Downloads/ne_50m_admin_0_countries/ne_50m_admin_0_countries.shp" );//file path
         root.getChildren().add(map);
 
 
         // ウィンドウ表示
         primaryStage.setScene(scene);
-        primaryStage.show();
+        primaryStage.show();//show maps?
     }
 
     /**
@@ -137,16 +134,9 @@ public class TestGeoMap2 extends Application
                 // 地形の塗りつぶし色を定義
                 java.util.List<String>  countries       = Arrays.asList( COUNTRIES );
                 Color                   currentColor    = null;
-                if( countries.contains( name ) )
-                {
-                    // 輸出国リストにある場合、国番号と色を取得
-                    countryIndex    = countries.indexOf( name );
-                    currentColor    = COLORS[ countryIndex ];
-                }else{
-                    // 輸出国リストにない場合、デフォルトの国番号と色を取得
-                    countryIndex    = 0;
-                    currentColor    = Color.ALICEBLUE;
-                }
+
+                countryIndex    = 0;
+                currentColor    = Color.ALICEBLUE;
 
                 // 頂点をつないでポリゴンを描く
                 Path path = new Path();
@@ -205,9 +195,8 @@ public class TestGeoMap2 extends Application
 
         // 画面に地図と文字を追加
         map.getChildren().add( mapShape );          // 地形
-        map.getChildren().add( textNotExport );     // 輸出国以外の国名
         map.getChildren().add( lineExport );        // 輸出国間の線
-        map.getChildren().add( textExport );        // 輸出国名
+
 
         // 初期表示位置とズーム
         map.translateXProperty().set(520);
