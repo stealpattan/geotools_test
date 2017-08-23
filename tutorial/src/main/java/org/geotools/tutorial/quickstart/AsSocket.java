@@ -5,13 +5,13 @@ import java.net.Socket;
 import java.net.InetSocketAddress;
 
 public class AsSocket{
-    String ASnumber;
+    private String asnum;
     public AsSocket(String asnum){
-        ASnumber = asnum;
+        this.asnum = asnum;
+
     }
-    public static void AsDataGetter(){
+    public static void AsDataGetter(String ASnumber){
         int hostnumbercontrol = 1;
-        String ASnumber = "AS3400";
         String[] hostname = getHostName();
         String host = hostname[hostnumbercontrol];
         int port = 43;
@@ -126,5 +126,8 @@ public class AsSocket{
     public static String[] getHostName(){
         String[] host = {"whois.nic.ad.jp", "whois.apnic.net", "whois.arin.net", "whois.ripe.net", "whois.lacnic.net", "whois.afrinic.net"};
         return host;
+    }
+    public String getAsNumber(){
+        return asnum;
     }
 }
