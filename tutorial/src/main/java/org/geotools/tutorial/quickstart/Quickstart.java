@@ -56,7 +56,7 @@ public class Quickstart {
         );
         SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(pointtype);
 
-        Coordinate[] coords  = new Coordinate[] {new Coordinate(139.6917064, 35.6894875), new Coordinate(2, 0), new Coordinate(8, 6) };
+        Coordinate[] coords  = new Coordinate[] {new Coordinate(139.6917064, 35.6894875), new Coordinate(0,0) };
 
         LineString line = geometryFactory.createLineString(coords);
         sfb.add(line);
