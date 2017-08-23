@@ -5,18 +5,26 @@ import java.net.Socket;
 import java.net.InetSocketAddress;
 
 public class AsSocket{
-    public static void main(String[] args){
-        String[] host = getHostName();
+    private String asnum;
+    public AsSocket(String asnum){
+        this.asnum = asnum;
+
+    }
+    public static void AsDataGetter(String ASnumber){
+        int hostnumbercontrol = 1;
+        String[] hostname = getHostName();
+        String host = hostname[hostnumbercontrol];
         int port = 43;
-        String result,str;
+        String result;
         result = "finish";
         try{
             Socket sock = new Socket();
-            sock.connect(new InetSocketAddress(host[1], port));
+            sock.connect(new InetSocketAddress(host, port));
             BufferedWriter sockout;
             sockout = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
             BufferedReader sockre = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-            callRIR(host[1], sock, sockout, sockre, "AS5000");
+
+            callRIR(host, sock, sockout, sockre, ASnumber);
         }catch(Exception e){
             System.out.println(e);
         }
@@ -48,30 +56,27 @@ public class AsSocket{
             System.out.println("Exception happen:" + e);
         }
     }
-    public static void saparateHost(String host, BufferedReader sockre, String ASnumber){
+    public static void saparateHost(String host, BufferedReader sockre, String ASnumber) {
         String[] hostname = getHostName();
         int num = 0;
-        for(int i=1;i<6;i++){
-            if(hostname[i] == host){
+        for (int i = 1; i < 6; i++) {
+            if (host == hostname[i]) {
                 num = i;
                 break;
             }
         }
         takeLocation(num, sockre, ASnumber);
     }
-    public static String[] getHostName(){
-        String[] host = {"whois.nic.ad.jp", "whois.apnic.net", "whois.arin.net", "whois.ripe.net", "whois.lacnic.net", "whois.afrinic.net"};
-        return host;
-    }
-    public static void takeLocation(int hostnumber, BufferedReader sockre, String ASnumber){
+    public static boolean takeLocation(int hostnumber, BufferedReader sockre, String ASnumber){
         String str;
+        boolean result = true;
         System.out.println("result of call: ASnumber: " + ASnumber);
+        System.out.println("call host:" + hostnumber);
         try {
             switch (hostnumber) {
                 case 1:
-                case 3:
                     while ((str = sockre.readLine()) != null) {
-                        if (str.indexOf("address") != -1) {
+                        if ((str.indexOf("address")) != -1) {
                             System.out.println("result: " + str);
                         }
                     }
@@ -87,6 +92,12 @@ public class AsSocket{
                             System.out.println("result: " + str);
                         }
                         else if((str.indexOf("Country")) != -1){
+                            System.out.println("result: " + str);
+                        }
+                    }
+                case 3:
+                    while ((str = sockre.readLine()) != null) {
+                        if ((str.indexOf("address")) != -1) {
                             System.out.println("result: " + str);
                         }
                     }
@@ -110,5 +121,13 @@ public class AsSocket{
         }catch(Exception e){
             System.out.println("exception happen:" + e);
         }
+        return result;
+    }
+    public static String[] getHostName(){
+        String[] host = {"whois.nic.ad.jp", "whois.apnic.net", "whois.arin.net", "whois.ripe.net", "whois.lacnic.net", "whois.afrinic.net"};
+        return host;
+    }
+    public String getAsNumber(){
+        return asnum;
     }
 }
