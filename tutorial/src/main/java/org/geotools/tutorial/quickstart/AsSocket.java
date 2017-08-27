@@ -6,17 +6,20 @@ import java.net.InetSocketAddress;
 
 public class AsSocket{
     private String asnum;
-    public AsSocket(String asnum){
-        this.asnum = asnum;
+    private int hostnum;
 
+    //Constractor.
+    public AsSocket(String asnum, int hostnum){
+        this.asnum = asnum;
+        this.hostnum = hostnum;
     }
-    public static void AsDataGetter(String ASnumber){
-        int hostnumbercontrol = 1;
+
+    public static void AsDataGetter(String ASnumber, int HOSTnumber){
+        int hostnumbercontrol = HOSTnumber;
         String[] hostname = getHostName();
         String host = hostname[hostnumbercontrol];
         int port = 43;
-        String result;
-        result = "finish";
+        boolean callresult = true;
         try{
             Socket sock = new Socket();
             sock.connect(new InetSocketAddress(host, port));
@@ -24,17 +27,26 @@ public class AsSocket{
             sockout = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
             BufferedReader sockre = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 
-            callRIR(host, sock, sockout, sockre, ASnumber);
+            callresult = callRIR(host, sockout, sockre, ASnumber);
+
+            if(callresult == false && hostnumbercontrol < 5){
+                System.out.println("callresult: " + callresult);
+                hostnumbercontrol = hostnumbercontrol + 1;
+                // Call myself
+                AsDataGetter(ASnumber, hostnumbercontrol);
+            }
+            else if(callresult == false && hostnumbercontrol == 5){
+                System.out.println("no match any host server");
+            }
         }catch(Exception e){
             System.out.println(e);
         }
-        System.out.println("result:" + result);
     }
 
     /*
     * Call RIR.
     * Request AS number by String type.
-    * If AS number does not exist hot server, change number in "host[number]".
+    * If AS number does not exist host server, change number in "host[number]".
     *
     * Relation between number and host is below.
     * number = 0, host = NIC
@@ -46,18 +58,22 @@ public class AsSocket{
     *
     * Request format is "AS****" and variable type is String.
     * */
-    public static void callRIR(String host, Socket sock, BufferedWriter sockout, BufferedReader sockre, String ASnumber){
+    public static boolean callRIR(String host, BufferedWriter sockout, BufferedReader sockre, String ASnumber){
+        boolean result = false;
         try{
             sockout.write(ASnumber);
             sockout.newLine();
             sockout.flush();
-            saparateHost(host,sockre,ASnumber);
+            result = saparateHost(host,sockre,ASnumber);
         }catch(Exception e){
             System.out.println("Exception happen:" + e);
         }
+        System.out.println("callRIR: " + result);
+        return result;
     }
-    public static void saparateHost(String host, BufferedReader sockre, String ASnumber) {
+    public static boolean saparateHost(String host, BufferedReader sockre, String ASnumber) {
         String[] hostname = getHostName();
+        boolean result;
         int num = 0;
         for (int i = 1; i < 6; i++) {
             if (host == hostname[i]) {
@@ -65,69 +81,136 @@ public class AsSocket{
                 break;
             }
         }
-        takeLocation(num, sockre, ASnumber);
+        result = takeLocation(num, sockre, ASnumber);
+        System.out.println("saparateHost:" + result);
+        return result;
     }
     public static boolean takeLocation(int hostnumber, BufferedReader sockre, String ASnumber){
         String str;
         boolean result = true;
+        System.out.println("\n");
         System.out.println("result of call: ASnumber: " + ASnumber);
         System.out.println("call host:" + hostnumber);
         try {
             switch (hostnumber) {
+                //IANA
+                case 0:
+                    while((str = sockre.readLine()) != null){
+                        if(true){
+                            System.out.println(str);
+                        }
+                    }
+                //APNIC
                 case 1:
                     while ((str = sockre.readLine()) != null) {
-                        if ((str.indexOf("address")) != -1) {
+                        if((str.indexOf("address:")) != -1){
                             System.out.println("result: " + str);
                         }
+                        else{
+                            result = false;
+                        }
+                        if ((str.indexOf("ERROR")) != -1) {
+                            result = false;
+                        }
                     }
+                //ARIN
                 case 2:
                     while ((str = sockre.readLine()) != null) {
-                        if (str.indexOf("Street") != -1) {
+                        if (str.indexOf("Street:") != -1) {
                             System.out.println("result: " + str);
                         }
-                        else if((str.indexOf("City")) != -1){
+                        else if((str.indexOf("City:")) != -1){
                             System.out.println("result: " + str);
                         }
-                        else if((str.indexOf("State/Province")) != -1){
+                        else if((str.indexOf("State/Province:")) != -1){
                             System.out.println("result: " + str);
                         }
-                        else if((str.indexOf("Country")) != -1){
+                        else if((str.indexOf("Country:")) != -1){
                             System.out.println("result: " + str);
+                        }
+                        else{
+                            result = false;
+                        }
+                        if((str.indexOf("No match found for")) != -1){
+                            result = false;
                         }
                     }
+                //RIPE
                 case 3:
                     while ((str = sockre.readLine()) != null) {
-                        if ((str.indexOf("address")) != -1) {
+                        if ((str.indexOf("address:")) != -1) {
                             System.out.println("result: " + str);
+                        }
+                        else{
+                            result = false;
+                        }
+                        if((str.indexOf("ASN block not managed by the RIPE NCC")) != -1){
+                            result = false;
+                        }
+                        if((str.indexOf("see http://www.")) != -1){
+                            result = false;
                         }
                     }
+                //AFRINIC
                 case 4:
+                    while((str = sockre.readLine()) != null){
+                        if((str.indexOf("Address:")) != -1){
+                            System.out.println("result: " + str);
+                        }
+                        else if((str.indexOf("City:")) != -1){
+                            System.out.println("result: " + str);
+                        }
+                        else if((str.indexOf("StateProv:")) != -1){
+                            System.out.println("result: " + str);
+                        }
+                        else if((str.indexOf("Country:")) != -1){
+                            System.out.println("result: " + str);
+                        }
+                        else{
+                            result = false;
+                        }
+                        if((str.indexOf("ERROR:101: no entries found")) != -1){
+                            result = false;
+                        }
+                    }
+                //LACNIC
                 case 5:
                     while((str = sockre.readLine()) != null){
-                        if((str.indexOf("Address")) != -1){
+                        if((str.indexOf("Address:")) != -1){
                             System.out.println("result: " + str);
                         }
-                        else if((str.indexOf("City")) != -1){
+                        else if((str.indexOf("City:")) != -1){
                             System.out.println("result: " + str);
                         }
-                        else if((str.indexOf("StateProv")) != -1){
+                        else if((str.indexOf("StateProv:")) != -1){
                             System.out.println("result: " + str);
                         }
-                        else if((str.indexOf("Country")) != -1){
+                        else if((str.indexOf("Country:")) != -1){
                             System.out.println("result: " + str);
+                        }
+                        else if((str.indexOf("address:")) != -1){
+                            System.out.println("result: " + str);
+                        }
+                        else{
+                            result = false;
                         }
                     }
             }
         }catch(Exception e){
             System.out.println("exception happen:" + e);
         }
+        System.out.println("takelocation:" + result);
         return result;
     }
+
     public static String[] getHostName(){
-        String[] host = {"whois.nic.ad.jp", "whois.apnic.net", "whois.arin.net", "whois.ripe.net", "whois.lacnic.net", "whois.afrinic.net"};
+        String[] host = {"whois.iana.org", "whois.apnic.net", "whois.arin.net", "whois.ripe.net", "whois.afrinic.net", "whois.lacnic.net"};
         return host;
     }
     public String getAsNumber(){
         return asnum;
+    }
+    public int getHostNumber(){
+        return hostnum;
     }
 }
