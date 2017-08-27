@@ -24,8 +24,6 @@ import org.geotools.swing.data.JFileDataStoreChooser;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
-//Below code is used when I draw the line on the map
-
 
 /**
  * Created by shoma-ito on 8/9/2017 AD.
