@@ -38,6 +38,8 @@ public class AsSocket{
             else if(callresult == false && hostnumbercontrol == 5){
                 System.out.println("no match any host server");
             }
+            //Close socket
+            closeConnection(sock);
         }catch(Exception e){
             System.out.println(e);
         }
@@ -49,7 +51,7 @@ public class AsSocket{
     * If AS number does not exist host server, change number in "host[number]".
     *
     * Relation between number and host is below.
-    * number = 0, host = NIC
+    * number = 0, host = IANA
     * number = 1, host = APNIC
     * number = 2, host = ARIN
     * number = 3, host = RIPE
@@ -58,7 +60,7 @@ public class AsSocket{
     *
     * Request format is "AS****" and variable type is String.
     * */
-    public static boolean callRIR(String host, BufferedWriter sockout, BufferedReader sockre, String ASnumber){
+    private static boolean callRIR(String host, BufferedWriter sockout, BufferedReader sockre, String ASnumber){
         boolean result = false;
         try{
             sockout.write(ASnumber);
@@ -71,7 +73,7 @@ public class AsSocket{
         System.out.println("callRIR: " + result);
         return result;
     }
-    public static boolean saparateHost(String host, BufferedReader sockre, String ASnumber) {
+    private static boolean saparateHost(String host, BufferedReader sockre, String ASnumber) {
         String[] hostname = getHostName();
         boolean result;
         int num = 0;
@@ -85,7 +87,7 @@ public class AsSocket{
         System.out.println("saparateHost:" + result);
         return result;
     }
-    public static boolean takeLocation(int hostnumber, BufferedReader sockre, String ASnumber){
+    private static boolean takeLocation(int hostnumber, BufferedReader sockre, String ASnumber){
         String str;
         boolean result = true;
         System.out.println("\n");
@@ -106,9 +108,6 @@ public class AsSocket{
                         if((str.indexOf("address:")) != -1){
                             System.out.println("result: " + str);
                         }
-                        else{
-                            result = false;
-                        }
                         if ((str.indexOf("ERROR")) != -1) {
                             result = false;
                         }
@@ -117,6 +116,9 @@ public class AsSocket{
                 case 2:
                     while ((str = sockre.readLine()) != null) {
                         if (str.indexOf("Street:") != -1) {
+                            System.out.println("result: " + str);
+                        }
+                        else if((str.indexOf("Address:")) != -1){
                             System.out.println("result: " + str);
                         }
                         else if((str.indexOf("City:")) != -1){
@@ -128,9 +130,6 @@ public class AsSocket{
                         else if((str.indexOf("Country:")) != -1){
                             System.out.println("result: " + str);
                         }
-                        else{
-                            result = false;
-                        }
                         if((str.indexOf("No match found for")) != -1){
                             result = false;
                         }
@@ -140,9 +139,6 @@ public class AsSocket{
                     while ((str = sockre.readLine()) != null) {
                         if ((str.indexOf("address:")) != -1) {
                             System.out.println("result: " + str);
-                        }
-                        else{
-                            result = false;
                         }
                         if((str.indexOf("ASN block not managed by the RIPE NCC")) != -1){
                             result = false;
@@ -165,9 +161,6 @@ public class AsSocket{
                         }
                         else if((str.indexOf("Country:")) != -1){
                             System.out.println("result: " + str);
-                        }
-                        else{
-                            result = false;
                         }
                         if((str.indexOf("ERROR:101: no entries found")) != -1){
                             result = false;
@@ -212,5 +205,13 @@ public class AsSocket{
     }
     public int getHostNumber(){
         return hostnum;
+    }
+    public static void closeConnection(Socket sock){
+        try{
+            sock.close();
+            System.out.println("Close connection correctry");
+        }catch(Exception e){
+            System.out.println(e);
+        }
     }
 }
