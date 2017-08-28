@@ -7,6 +7,7 @@ import java.net.InetSocketAddress;
 public class AsSocket{
     private String asnum;
     private int hostnum;
+    public String Address;
 
     //Constractor.
     public AsSocket(String asnum, int hostnum){
@@ -70,7 +71,7 @@ public class AsSocket{
         }catch(Exception e){
             System.out.println("Exception happen:" + e);
         }
-        System.out.println("callRIR: " + result);
+        //System.out.println("callRIR: " + result);
         return result;
     }
     private static boolean saparateHost(String host, BufferedReader sockre, String ASnumber) {
@@ -84,11 +85,12 @@ public class AsSocket{
             }
         }
         result = takeLocation(num, sockre, ASnumber);
-        System.out.println("saparateHost:" + result);
+        //System.out.println("saparateHost:" + result);
         return result;
     }
     private static boolean takeLocation(int hostnumber, BufferedReader sockre, String ASnumber){
         String str;
+        String address = "";
         boolean result = true;
         System.out.println("\n");
         System.out.println("result of call: ASnumber: " + ASnumber);
@@ -107,6 +109,15 @@ public class AsSocket{
                     while ((str = sockre.readLine()) != null) {
                         if((str.indexOf("address:")) != -1){
                             System.out.println("result: " + str);
+                            str = str.replaceAll("address:", "");
+                            str = str.replaceAll("  ", "");
+                            address += str + ",";
+                        }
+                        else if((str.indexOf("country:")) != -1){
+                            System.out.println("result: " + str);
+                            str = str.replaceAll("country:" , "");
+                            str = str.replaceAll("  " , "");
+                            break;
                         }
                         if ((str.indexOf("ERROR")) != -1) {
                             result = false;
@@ -117,18 +128,34 @@ public class AsSocket{
                     while ((str = sockre.readLine()) != null) {
                         if (str.indexOf("Street:") != -1) {
                             System.out.println("result: " + str);
+                            str = str.replaceAll("Street:", "");
+                            str = str.replaceAll("  ", "");
+                            address += str + ",";
                         }
                         else if((str.indexOf("Address:")) != -1){
                             System.out.println("result: " + str);
+                            str = str.replaceAll("Address:" , "");
+                            str = str.replaceAll("  ", "");
+                            address += str + ",";
                         }
                         else if((str.indexOf("City:")) != -1){
                             System.out.println("result: " + str);
+                            str = str.replaceAll("City:" , "");
+                            str = str.replaceAll("  ", "");
+                            address += str + ",";
                         }
                         else if((str.indexOf("State/Province:")) != -1){
                             System.out.println("result: " + str);
+                            str = str.replaceAll("State/Province:" , "");
+                            str = str.replaceAll("  " , "");
+                            address += str + ",";
                         }
                         else if((str.indexOf("Country:")) != -1){
                             System.out.println("result: " + str);
+                            str = str.replaceAll("Country:" , "");
+                            str = str.replaceAll("  ", "");
+                            address += str + ",";
+                            break;
                         }
                         if((str.indexOf("No match found for")) != -1){
                             result = false;
@@ -139,6 +166,13 @@ public class AsSocket{
                     while ((str = sockre.readLine()) != null) {
                         if ((str.indexOf("address:")) != -1) {
                             System.out.println("result: " + str);
+                            str = str.replaceAll("address:" , "");
+                            str = str.replaceAll("  " , "");
+                            address += str + ",";
+                        }
+                        else if((str.indexOf("abuse-c:")) != -1){
+                            System.out.println("result: " + str);
+                            break;
                         }
                         if((str.indexOf("ASN block not managed by the RIPE NCC")) != -1){
                             result = false;
@@ -152,15 +186,27 @@ public class AsSocket{
                     while((str = sockre.readLine()) != null){
                         if((str.indexOf("Address:")) != -1){
                             System.out.println("result: " + str);
+                            str = str.replaceAll("Address:" , "");
+                            str = str.replaceAll("  " , "");
+                            address += str + ",";
                         }
                         else if((str.indexOf("City:")) != -1){
                             System.out.println("result: " + str);
+                            str = str.replaceAll("City:" , "");
+                            str = str.replaceAll("  " , "");
+                            address += str + ",";
                         }
                         else if((str.indexOf("StateProv:")) != -1){
                             System.out.println("result: " + str);
+                            str = str.replaceAll("StateProv" , "");
+                            str = str.replaceAll("  " , "");
+                            address += str + ",";
                         }
                         else if((str.indexOf("Country:")) != -1){
                             System.out.println("result: " + str);
+                            str = str.replaceAll("Country:" , "");
+                            str = str.replaceAll("  " , "");
+                            address += str + ",";
                         }
                         if((str.indexOf("ERROR:101: no entries found")) != -1){
                             result = false;
@@ -171,18 +217,33 @@ public class AsSocket{
                     while((str = sockre.readLine()) != null){
                         if((str.indexOf("Address:")) != -1){
                             System.out.println("result: " + str);
+                            str = str.replaceAll("Address:" , "");
+                            str = str.replaceAll("  " , "");
+                            address += str + ",";
                         }
                         else if((str.indexOf("City:")) != -1){
                             System.out.println("result: " + str);
+                            str = str.replaceAll("City:" , "");
+                            str = str.replaceAll("  " , "");
+                            address += str + ",";
                         }
                         else if((str.indexOf("StateProv:")) != -1){
                             System.out.println("result: " + str);
+                            str = str.replaceAll("StateProv:" , "");
+                            str = str.replaceAll("  " , "");
+                            address += str + ",";
                         }
                         else if((str.indexOf("Country:")) != -1){
                             System.out.println("result: " + str);
+                            str = str.replaceAll("Country:" , "");
+                            str = str.replaceAll("  " , "");
+                            address += str + ",";
                         }
                         else if((str.indexOf("address:")) != -1){
                             System.out.println("result: " + str);
+                            str = str.replaceAll("address:" , "");
+                            str = str.replaceAll("  " , "");
+                            address += str + ",";
                         }
                         else{
                             result = false;
@@ -192,7 +253,9 @@ public class AsSocket{
         }catch(Exception e){
             System.out.println("exception happen:" + e);
         }
-        System.out.println("takelocation:" + result);
+        //System.out.println("takelocation:" + result);
+        System.out.println(address);
+        setResult(address);
         return result;
     }
 
@@ -206,6 +269,14 @@ public class AsSocket{
     public int getHostNumber(){
         return hostnum;
     }
+    public static void setResult(String address){
+        GlobalVariables instance = new GlobalVariables();
+        instance.Address = address;
+    }
+    public static String getResult(){
+        GlobalVariables instance = new GlobalVariables();
+        return instance.Address;
+    }
     public static void closeConnection(Socket sock){
         try{
             sock.close();
@@ -214,4 +285,8 @@ public class AsSocket{
             System.out.println(e);
         }
     }
+}
+
+class GlobalVariables{
+    public static String Address;
 }
