@@ -7,7 +7,6 @@ import java.net.InetSocketAddress;
 public class AsSocket{
     private String asnum;
     private int hostnum;
-    public String Address;
 
     //Constractor.
     public AsSocket(String asnum, int hostnum){
@@ -117,7 +116,9 @@ public class AsSocket{
                             System.out.println("result: " + str);
                             str = str.replaceAll("country:" , "");
                             str = str.replaceAll("  " , "");
-                            break;
+                        }
+                        else if((str.indexOf("as-block:")) != -1){
+                            address = "";
                         }
                         if ((str.indexOf("ERROR")) != -1) {
                             result = false;
