@@ -45,7 +45,7 @@ public class getLatitude{
         url = "http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?SingleLine=380+New+York+Street,+Redlands,+CA+92373&category=&outFields=*&forStorage=false&f=pjson";
         //url below.
         url = "http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?SingleLine=" + address + "&category=&outFields=*&forStorage=false&f=pjson";
-        System.out.println("make up url: " + url);
+        //System.out.println("make up url: " + url);
         try{
             //Access global variables
             GlobalVariables2 globalvariable = new GlobalVariables2();
@@ -61,9 +61,9 @@ public class getLatitude{
 
             final int connectionstatus = connector.getResponseCode();
             if(connectionstatus == HttpURLConnection.HTTP_OK){
-                System.out.println("connector open");
+                //System.out.println("connector open");
                 while((str = reader.readLine()) != null){
-                    System.out.println(str);
+                    //System.out.println(str);
                     if(str.indexOf("\"x\":") != -1){
                         str = str.replaceAll("\"x\":", "");
                         str = str.replaceAll(" " , "");
@@ -78,7 +78,7 @@ public class getLatitude{
                     }
                 }
             }
-            System.out.println("connection status: " + connectionstatus);
+            //System.out.println("connection status: " + connectionstatus);
         }catch(Exception e){
             System.out.println("error log: " + e);
         }
@@ -92,7 +92,7 @@ public class getLatitude{
         return gb.latdata + "," + gb.longdata;
     }
 }
-
+//Global variables are defined below.
 class GlobalVariables2{
     public static String latdata;
     public static String longdata;
